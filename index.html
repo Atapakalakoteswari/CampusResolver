@@ -1,0 +1,604 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
+    <title>Campus Resolver - Complaint Management System</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <!-- Firebase SDK (using modular SDK) -->
+    <script type="module">
+        // Import the functions you need from the SDKs
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-app.js";
+        import { getFirestore, collection, addDoc, getDocs, query, where, orderBy, onSnapshot, doc, updateDoc } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-firestore.js";
+        import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-auth.js";
+
+        // Your web app's Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyD75YmQm69M2mA6hDB03T7cwewCNXfhtMY",
+            authDomain: "campus-resolver-89fe9.firebaseapp.com",
+            projectId: "campus-resolver-89fe9",
+            storageBucket: "campus-resolver-89fe9.firebasestorage.app",
+            messagingSenderId: "883554051215",
+            appId: "1:883554051215:web:bb8e8d911bbfe6cb9cbcfa"
+        };
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+        const auth = getAuth(app);
+
+        // Make Firebase services available globally
+        window.db = db;
+        window.auth = auth;
+        window.createUserWithEmailAndPassword = createUserWithEmailAndPassword;
+        window.signInWithEmailAndPassword = signInWithEmailAndPassword;
+        window.signOut = signOut;
+        window.onAuthStateChanged = onAuthStateChanged;
+        window.collection = collection;
+        window.addDoc = addDoc;
+        window.getDocs = getDocs;
+        window.query = query;
+        window.where = where;
+        window.orderBy = orderBy;
+        window.onSnapshot = onSnapshot;
+        window.doc = doc;
+        window.updateDoc = updateDoc;
+    </script>
+</head>
+<body>
+    <div class="app-container">
+        <!-- Navigation Bar -->
+        <nav class="navbar">
+            <div class="nav-brand">
+                <i class="fas fa-university"></i>
+                <span>Campus Resolver</span>
+            </div>
+            <div class="nav-menu" id="navMenu">
+                <a onclick="showSection('home')" class="nav-link active">Home</a>
+                <a onclick="showSection('aboutPage')" class="nav-link">About</a>
+                <a onclick="showSection('dashboard')" class="nav-link">Dashboard</a>
+                <a onclick="showSection('adminLogin')" class="nav-link">Admin</a>
+                <button class="btn-primary" onclick="showSection('userLoginChoice')">
+                    <i class="fas fa-sign-in-alt"></i> Get Started
+                </button>
+            </div>
+            <div class="hamburger" onclick="toggleMenu()">
+                <i class="fas fa-bars"></i>
+            </div>
+        </nav>
+
+        <!-- HOME SECTION -->
+        <section id="home" class="section active">
+            <div class="hero-section">
+                <div class="hero-content">
+                    <h1 class="hero-title">Welcome to <span>Campus Resolver</span></h1>
+                    <p class="hero-subtitle">Your voice matters! Report and track campus complaints effortlessly with our smart resolution system.</p>
+                    <div class="hero-buttons">
+                        <button class="btn-primary btn-large" onclick="showSection('userLoginChoice')">
+                            <i class="fas fa-rocket"></i> Get Started
+                        </button>
+                        <button class="btn-outline btn-large" onclick="showSection('aboutPage')">
+                            <i class="fas fa-info-circle"></i> Learn More
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="features-section">
+                <h2 class="section-title">Why Choose Campus Resolver?</h2>
+                <div class="features-grid">
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-pen"></i>
+                        </div>
+                        <h3>Easy Submission</h3>
+                        <p>Submit complaints in seconds with our intuitive form</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-tasks"></i>
+                        </div>
+                        <h3>Real-time Tracking</h3>
+                        <p>Track your complaint status anytime, anywhere</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-shield-alt"></i>
+                        </div>
+                        <h3>Secure & Private</h3>
+                        <p>Your identity and complaints are always protected</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-bolt"></i>
+                        </div>
+                        <h3>Fast Resolution</h3>
+                        <p>Quick response and efficient problem-solving</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ABOUT SECTION -->
+        <section id="aboutPage" class="section">
+            <div class="about-container">
+                <h2 class="section-title">About Campus Resolver</h2>
+                <div class="about-content">
+                    <div class="about-text">
+                        <p>Campus Resolver is a comprehensive complaint management system designed to bridge the gap between students and administration. Our platform ensures that every concern is heard, tracked, and resolved efficiently.</p>
+                        <div class="about-features">
+                            <div class="about-feature">
+                                <i class="fas fa-check-circle"></i>
+                                <span>100% Digital Process</span>
+                            </div>
+                            <div class="about-feature">
+                                <i class="fas fa-check-circle"></i>
+                                <span>Transparent Tracking</span>
+                            </div>
+                            <div class="about-feature">
+                                <i class="fas fa-check-circle"></i>
+                                <span>24/7 Availability</span>
+                            </div>
+                            <div class="about-feature">
+                                <i class="fas fa-check-circle"></i>
+                                <span>Dedicated Support Team</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="about-stats">
+                        <div class="stat-circle">
+                            <span class="stat-circle-number">10+</span>
+                            <span>Total Complaints</span>
+                        </div>
+                        <div class="stat-circle">
+                            <span class="stat-circle-number">5+</span>
+                            <span>Resolved</span>
+                        </div>
+                        <div class="stat-circle">
+                            <span class="stat-circle-number">10+</span>
+                            <span>Active</span>
+                        </div>
+                    </div>
+                </div>
+                <button class="btn-back" onclick="showSection('home')">
+                    <i class="fas fa-arrow-left"></i> Back to Home
+                </button>
+            </div>
+        </section>
+
+        <!-- PUBLIC DASHBOARD SECTION -->
+        <section id="dashboard" class="section">
+            <div class="dashboard-container">
+                <div class="dashboard-header">
+                    <div class="welcome-section">
+                        <h2>Complaint Dashboard</h2>
+                        <p>Real-time overview of campus complaints</p>
+                    </div>
+                </div>
+
+                <div class="stats-grid">
+                    <div class="stat-card total">
+                        <div class="stat-icon">
+                            <i class="fas fa-clipboard-list"></i>
+                        </div>
+                        <div class="stat-details">
+                            <span class="stat-value" id="dashboardTotalComplaints">0</span>
+                            <span class="stat-label">Total Complaints</span>
+                        </div>
+                    </div>
+                    <div class="stat-card resolved">
+                        <div class="stat-icon">
+                            <i class="fas fa-check-circle"></i>
+                        </div>
+                        <div class="stat-details">
+                            <span class="stat-value" id="dashboardResolvedComplaints">0</span>
+                            <span class="stat-label">Resolved</span>
+                        </div>
+                    </div>
+                    <div class="stat-card pending">
+                        <div class="stat-icon">
+                            <i class="fas fa-clock"></i>
+                        </div>
+                        <div class="stat-details">
+                            <span class="stat-value" id="dashboardPendingComplaints">0</span>
+                            <span class="stat-label">Pending</span>
+                        </div>
+                    </div>
+                    <div class="stat-card progress">
+                        <div class="stat-icon">
+                            <i class="fas fa-chart-line"></i>
+                        </div>
+                        <div class="stat-details">
+                            <span class="stat-value" id="dashboardResolutionRate">0%</span>
+                            <span class="stat-label">Resolution Rate</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="complaints-management">
+                    <h3>Recent Complaints</h3>
+                    <div class="filter-bar">
+                        <select id="dashboardFilter" onchange="updatePublicDashboard()">
+                            <option value="all">All Complaints</option>
+                            <option value="pending">Pending</option>
+                            <option value="resolved">Resolved</option>
+                        </select>
+                    </div>
+                    <div id="publicComplaintList" class="complaints-list"></div>
+                </div>
+
+                <button class="btn-back" onclick="showSection('home')">
+                    <i class="fas fa-arrow-left"></i> Back to Home
+                </button>
+            </div>
+        </section>
+
+        <!-- USER LOGIN CHOICE -->
+        <section id="userLoginChoice" class="section">
+            <div class="choice-container">
+                <h2 class="section-title">Welcome to Campus Resolver</h2>
+                <div class="choice-cards">
+                    <div class="choice-card" onclick="showSection('userRegister')">
+                        <div class="choice-icon">
+                            <i class="fas fa-user-plus"></i>
+                        </div>
+                        <h3>New User?</h3>
+                        <p>Create your account to start reporting complaints</p>
+                        <button class="btn-primary">Register Now</button>
+                    </div>
+                    <div class="choice-card" onclick="showSection('userLogin')">
+                        <div class="choice-icon">
+                            <i class="fas fa-sign-in-alt"></i>
+                        </div>
+                        <h3>Existing User</h3>
+                        <p>Login to track your complaints and submit new ones</p>
+                        <button class="btn-outline">Login Here</button>
+                    </div>
+                </div>
+                <button class="btn-back" onclick="showSection('home')">
+                    <i class="fas fa-arrow-left"></i> Back
+                </button>
+            </div>
+        </section>
+
+        <!-- USER REGISTRATION -->
+        <section id="userRegister" class="section">
+            <div class="form-container">
+                <div class="form-header">
+                    <h2>Create Account</h2>
+                    <p>Join Campus Resolver today</p>
+                </div>
+                <form onsubmit="registerUser(event)" class="modern-form">
+                    <div class="form-group">
+                        <label for="regFullName">
+                            <i class="fas fa-user"></i> Full Name
+                        </label>
+                        <input type="text" id="regFullName" placeholder="Enter your full name" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="regStudentId">
+                            <i class="fas fa-id-card"></i> Student ID
+                        </label>
+                        <input type="text" id="regStudentId" placeholder="Enter your student ID" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="regEmail">
+                            <i class="fas fa-envelope"></i> Email
+                        </label>
+                        <input type="email" id="regEmail" placeholder="Enter your email" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="regPassword">
+                            <i class="fas fa-lock"></i> Password
+                        </label>
+                        <input type="password" id="regPassword" placeholder="Create a password" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="regConfirmPassword">
+                            <i class="fas fa-lock"></i> Confirm Password
+                        </label>
+                        <input type="password" id="regConfirmPassword" placeholder="Confirm your password" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="regDepartment">
+                            <i class="fas fa-building"></i> Department
+                        </label>
+                        <select id="regDepartment" required>
+                            <option value="">Select Department</option>
+                            <option>CSE</option>
+                            <option>AIML</option>
+                            <option>ECE</option>
+                            <option>EEE</option>
+                            <option>CIVIL</option>
+                            <OPtion>MECH</OPtion>
+                            <OPtion>OTHERS</OPtion>
+                        </select>
+                    </div>
+                    <button type="submit" class="btn-primary btn-full">
+                        <i class="fas fa-user-plus"></i> Register
+                    </button>
+                </form>
+                <p class="form-footer">
+                    Already have an account? 
+                    <a onclick="showSection('userLogin')">Login here</a>
+                </p>
+                <button class="btn-back" onclick="showSection('userLoginChoice')">
+                    <i class="fas fa-arrow-left"></i> Back
+                </button>
+            </div>
+        </section>
+
+        <!-- USER LOGIN -->
+        <section id="userLogin" class="section">
+            <div class="form-container">
+                <div class="form-header">
+                    <h2>Welcome Back!</h2>
+                    <p>Login to your account</p>
+                </div>
+                <form onsubmit="loginUser(event)" class="modern-form">
+                    <div class="form-group">
+                        <label for="loginEmail">
+                            <i class="fas fa-envelope"></i> Email
+                        </label>
+                        <input type="email" id="loginEmail" placeholder="Enter your email" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="loginPassword">
+                            <i class="fas fa-lock"></i> Password
+                        </label>
+                        <input type="password" id="loginPassword" placeholder="Enter your password" required>
+                    </div>
+                    <button type="submit" class="btn-primary btn-full">
+                        <i class="fas fa-sign-in-alt"></i> Login
+                    </button>
+                </form>
+                <p class="form-footer">
+                    Don't have an account? 
+                    <a onclick="showSection('userRegister')">Register here</a>
+                </p>
+                <button class="btn-back" onclick="showSection('userLoginChoice')">
+                    <i class="fas fa-arrow-left"></i> Back
+                </button>
+            </div>
+        </section>
+
+        <!-- ADMIN LOGIN -->
+        <section id="adminLogin" class="section">
+            <div class="form-container admin-form">
+                <div class="form-header">
+                    <h2><i class="fas fa-crown"></i> Admin Login</h2>
+                    <p>Secure administrator access</p>
+                </div>
+                <form onsubmit="loginAdmin(event)" class="modern-form">
+                    <div class="form-group">
+                        <label for="adminEmail">
+                            <i class="fas fa-envelope"></i> Admin Email
+                        </label>
+                        <input type="email" id="adminEmail" placeholder="admin@campus.edu" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="adminPassword">
+                            <i class="fas fa-lock"></i> Password
+                        </label>
+                        <input type="password" id="adminPassword" placeholder="Enter admin password" required>
+                    </div>
+                    <button type="submit" class="btn-primary btn-full">
+                        <i class="fas fa-sign-in-alt"></i> Login as Admin
+                    </button>
+                </form>
+                <button class="btn-back" onclick="showSection('home')">
+                    <i class="fas fa-arrow-left"></i> Back to Home
+                </button>
+            </div>
+        </section>
+
+        <!-- USER DASHBOARD (Personal) -->
+        <section id="userDashboard" class="section">
+            <div class="dashboard-container">
+                <div class="dashboard-header">
+                    <div class="welcome-section">
+                        <h2>Welcome, <span id="userDisplayName">User</span>!</h2>
+                        <p id="userDisplayInfo">Student Dashboard</p>
+                    </div>
+                    <div class="dashboard-actions">
+                        <button class="btn-primary" onclick="showSection('newComplaint')">
+                            <i class="fas fa-plus"></i> New Complaint
+                        </button>
+                        <button class="btn-danger" onclick="logoutUser()">
+                            <i class="fas fa-sign-out-alt"></i> Logout
+                        </button>
+                    </div>
+                </div>
+
+                <div class="stats-grid">
+                    <div class="stat-card total">
+                        <div class="stat-icon">
+                            <i class="fas fa-clipboard-list"></i>
+                        </div>
+                        <div class="stat-details">
+                            <span class="stat-value" id="totalUserComplaints">0</span>
+                            <span class="stat-label">Total Complaints</span>
+                        </div>
+                    </div>
+                    <div class="stat-card resolved">
+                        <div class="stat-icon">
+                            <i class="fas fa-check-circle"></i>
+                        </div>
+                        <div class="stat-details">
+                            <span class="stat-value" id="resolvedUserComplaints">0</span>
+                            <span class="stat-label">Resolved</span>
+                        </div>
+                    </div>
+                    <div class="stat-card pending">
+                        <div class="stat-icon">
+                            <i class="fas fa-clock"></i>
+                        </div>
+                        <div class="stat-details">
+                            <span class="stat-value" id="pendingUserComplaints">0</span>
+                            <span class="stat-label">Pending</span>
+                        </div>
+                    </div>
+                    <div class="stat-card progress">
+                        <div class="stat-icon">
+                            <i class="fas fa-chart-line"></i>
+                        </div>
+                        <div class="stat-details">
+                            <span class="stat-value" id="resolutionRate">0%</span>
+                            <span class="stat-label">Resolution Rate</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="recent-complaints">
+                    <h3>Your Recent Complaints</h3>
+                    <div id="userComplaintList" class="complaints-list"></div>
+                </div>
+
+                <button class="btn-back" onclick="showSection('home')">
+                    <i class="fas fa-arrow-left"></i> Back to Home
+                </button>
+            </div>
+        </section>
+
+        <!-- ADMIN DASHBOARD -->
+        <section id="adminDashboard" class="section">
+            <div class="dashboard-container">
+                <div class="dashboard-header">
+                    <div class="welcome-section">
+                        <h2>Admin Dashboard</h2>
+                        <p>Manage all campus complaints</p>
+                    </div>
+                    <div class="dashboard-actions">
+                        <button class="btn-danger" onclick="logoutAdmin()">
+                            <i class="fas fa-sign-out-alt"></i> Logout
+                        </button>
+                    </div>
+                </div>
+
+                <div class="stats-grid">
+                    <div class="stat-card total">
+                        <div class="stat-icon">
+                            <i class="fas fa-clipboard-list"></i>
+                        </div>
+                        <div class="stat-details">
+                            <span class="stat-value" id="totalComplaints">0</span>
+                            <span class="stat-label">Total Complaints</span>
+                        </div>
+                    </div>
+                    <div class="stat-card resolved">
+                        <div class="stat-icon">
+                            <i class="fas fa-check-circle"></i>
+                        </div>
+                        <div class="stat-details">
+                            <span class="stat-value" id="resolvedComplaints">0</span>
+                            <span class="stat-label">Resolved</span>
+                        </div>
+                    </div>
+                    <div class="stat-card pending">
+                        <div class="stat-icon">
+                            <i class="fas fa-clock"></i>
+                        </div>
+                        <div class="stat-details">
+                            <span class="stat-value" id="pendingComplaints">0</span>
+                            <span class="stat-label">Pending</span>
+                        </div>
+                    </div>
+                    <div class="stat-card active-users">
+                        <div class="stat-icon">
+                            <i class="fas fa-users"></i>
+                        </div>
+                        <div class="stat-details">
+                            <span class="stat-value" id="activeUsers">0</span>
+                            <span class="stat-label">Active Users</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="complaints-management">
+                    <h3>All Complaints</h3>
+                    <div class="filter-bar">
+                        <select id="complaintFilter" onchange="filterComplaints()">
+                            <option value="all">All Complaints</option>
+                            <option value="pending">Pending</option>
+                            <option value="resolved">Resolved</option>
+                        </select>
+                        <select id="categoryFilter" onchange="filterComplaints()">
+                            <option value="all">All Categories</option>
+                            <option>Hostel</option>
+                            <option>Classroom</option>
+                            <option>Water</option>
+                            <option>Electricity</option>
+                            <option>Other</option>
+                        </select>
+                    </div>
+                    <div id="adminComplaintList" class="complaints-list"></div>
+                </div>
+
+                <button class="btn-back" onclick="showSection('home')">
+                    <i class="fas fa-arrow-left"></i> Back to Home
+                </button>
+            </div>
+        </section>
+
+        <!-- NEW COMPLAINT -->
+        <section id="newComplaint" class="section">
+            <div class="form-container">
+                <div class="form-header">
+                    <h2><i class="fas fa-plus-circle"></i> New Complaint</h2>
+                    <p>Please provide details about your issue</p>
+                </div>
+                <form onsubmit="submitComplaint(event)" class="modern-form">
+                    <div class="form-group">
+                        <label for="complaintCategory">
+                            <i class="fas fa-tag"></i> Issue Category
+                        </label>
+                        <select id="complaintCategory" required>
+                            <option value="">Select Category</option>
+                            <option>Hostel</option>
+                            <option>Classroom</option>
+                            <option>Water</option>
+                            <option>Electricity</option>
+                            <option>Cleanliness</option>
+                            <option>Security</option>
+                            <option>Other</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="complaintLocation">
+                            <i class="fas fa-map-marker-alt"></i> Location
+                        </label>
+                        <input type="text" id="complaintLocation" placeholder="e.g., Block A, Room 101" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="complaintDesc">
+                            <i class="fas fa-align-left"></i> Issue Description
+                        </label>
+                        <textarea id="complaintDesc" placeholder="Describe your issue in detail..." rows="5" required></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="complaintUrgency">
+                            <i class="fas fa-exclamation-triangle"></i> Urgency Level
+                        </label>
+                        <select id="complaintUrgency" required>
+                            <option value="low">Low - Can wait</option>
+                            <option value="medium" selected>Medium - Normal priority</option>
+                            <option value="high">High - Urgent attention needed</option>
+                            <option value="critical">Critical - Immediate action required</option>
+                        </select>
+                    </div>
+                    <button type="submit" class="btn-primary btn-full">
+                        <i class="fas fa-paper-plane"></i> Submit Complaint
+                    </button>
+                </form>
+                <button class="btn-back" onclick="showSection('userDashboard')">
+                    <i class="fas fa-arrow-left"></i> Back to Dashboard
+                </button>
+            </div>
+        </section>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
